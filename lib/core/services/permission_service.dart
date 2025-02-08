@@ -24,4 +24,12 @@ class PermissionService {
 
     return true;
   }
+
+  Future<Position> requestLocationPermission() async {
+    bool permission = await checkLocationPermission();
+    if (!permission) {
+      throw Exception('Permission refusée');
+    }
+    return await Geolocator.getCurrentPosition();
+  }
 }

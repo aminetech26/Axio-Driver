@@ -61,6 +61,7 @@ class _MapPageState extends State<MapPage> {
               title: Text("Mission de livraison",
                   style: theme.textTheme.displaySmall),
               centerTitle: true,
+              elevation: 2,
             ),
             body: state.when(
               initial: () => const SizedBox.shrink(),
@@ -70,6 +71,9 @@ class _MapPageState extends State<MapPage> {
               success: (destinationResponse) {
                 final trip = destinationResponse.data.trip;
                 final truck = destinationResponse.data.truck;
+                final estimatedDays = trip.predefinedEndDate
+                    .difference(trip.predefinedStartDate)
+                    .inDays;
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
@@ -83,13 +87,13 @@ class _MapPageState extends State<MapPage> {
                       ),
                       const SizedBox(height: 24),
                       Card(
-                        elevation: 4,
+                        elevation: 6,
                         color: AppColors.surfaceColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -99,6 +103,7 @@ class _MapPageState extends State<MapPage> {
                               ),
                               const SizedBox(height: 16),
                               ListTile(
+                                contentPadding: EdgeInsets.zero,
                                 leading: const Icon(Icons.calendar_today,
                                     color: AppColors.iconActive),
                                 title: Text("Date de début",
@@ -112,16 +117,34 @@ class _MapPageState extends State<MapPage> {
                                       color: AppColors.textSecondary),
                                 ),
                               ),
-                              ListTile(
-                                leading: const Icon(Icons.timer,
-                                    color: AppColors.iconActive),
-                                title: Text("Durée estimée",
-                                    style: theme.textTheme.headlineMedium),
-                                subtitle: Text(
-                                  "${trip.predefinedEndDate.difference(trip.predefinedStartDate).inDays} jours",
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: AppColors.textSecondary),
-                                ),
+                              const Divider(
+                                  height: 32, color: AppColors.borderLight),
+                              Row(
+                                children: [
+                                  const Icon(Icons.timer,
+                                      color: AppColors.iconActive),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Durée estimée",
+                                          style: theme.textTheme.headlineMedium,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          "$estimatedDays jours",
+                                          style: theme.textTheme.bodyLarge
+                                              ?.copyWith(
+                                                  color:
+                                                      AppColors.textSecondary),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                               const Divider(
                                   height: 32, color: AppColors.borderLight),
@@ -131,6 +154,7 @@ class _MapPageState extends State<MapPage> {
                               ),
                               const SizedBox(height: 16),
                               ListTile(
+                                contentPadding: EdgeInsets.zero,
                                 leading: const Icon(Icons.local_shipping,
                                     color: AppColors.iconActive),
                                 title: Text(truck.model,
@@ -141,6 +165,7 @@ class _MapPageState extends State<MapPage> {
                                         color: AppColors.textSecondary)),
                               ),
                               ListTile(
+                                contentPadding: EdgeInsets.zero,
                                 leading: const Icon(Icons.straighten,
                                     color: AppColors.iconActive),
                                 title: Text("Dimensions",
@@ -158,7 +183,7 @@ class _MapPageState extends State<MapPage> {
                       const SizedBox(height: 50),
                       ElevatedButton.icon(
                         onPressed: () {
-                          context.go('/mapViewRoute',
+                          context.push('/mapViewRoute',
                               extra: destinationResponse);
                         },
                         icon: const Icon(Icons.navigation,
@@ -172,7 +197,7 @@ class _MapPageState extends State<MapPage> {
                           backgroundColor: AppColors.primaryBlue,
                           padding: const EdgeInsets.all(16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
                       ),

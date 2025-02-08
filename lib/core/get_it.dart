@@ -1,6 +1,8 @@
 import 'package:axio_driver/core/api_client.dart';
 import 'package:axio_driver/view-models/map_viewmodel.dart';
+import 'package:axio_driver/view-models/route_viewmodel.dart';
 import 'package:axio_driver/views/MapView/cubit/map_cubit.dart';
+import 'package:axio_driver/views/MapView/cubit/route_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -12,4 +14,8 @@ Future initDependencies() async {
   getIt.registerLazySingleton<MapViewmodel>(
       () => MapViewmodel(apiClient: getIt<ApiClient>()));
   getIt.registerFactory(() => MapCubit(mapViewmodel: getIt<MapViewmodel>()));
+  getIt.registerLazySingleton<RouteViewmodel>(
+      () => (RouteViewmodel(apiClient: getIt<ApiClient>())));
+  getIt.registerFactory(
+      () => RouteCubit(routeViewmodel: getIt<RouteViewmodel>()));
 }
