@@ -29,4 +29,7 @@ class AppColors {
   // Border Colors
   static const borderLight = Color(0xFFE5E7EB); // Light grey for borders
   static const borderDark = Color(0xFF9CA3AF); // Darker grey for borders
+
+  // Error Colors
+  static const redError = Color(0xFFDC2626); // Error color for notifications and alerts
 }

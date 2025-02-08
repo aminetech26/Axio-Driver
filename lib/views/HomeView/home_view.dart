@@ -1,4 +1,5 @@
 import 'package:axio_driver/core/app_colors.dart';
+import 'package:axio_driver/core/theme.dart';
 import 'package:axio_driver/views/HistoryView/history_page.dart';
 import 'package:axio_driver/views/MapView/map_page.dart';
 import 'package:axio_driver/views/ProfileView/profile_page.dart';
@@ -78,10 +79,7 @@ class _HomeContentPageState extends State<HomeContentPage> {
               children: [
                 Text(
                   'Home Page',
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: themeData.textTheme.bodyLarge,
                 ),
                 // Add more widgets here
               ],
