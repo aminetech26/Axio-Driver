@@ -1,6 +1,7 @@
 import 'package:axio_driver/core/app_colors.dart';
 import 'package:axio_driver/core/theme.dart';
 import 'package:axio_driver/views/HistoryView/history_page.dart';
+import 'package:axio_driver/views/HomeView/home_content_page.dart';
 import 'package:axio_driver/views/MapView/map_page.dart';
 import 'package:axio_driver/views/ProfileView/profile_page.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -53,39 +54,6 @@ class _HomePageState extends State<HomePage> {
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
-      ),
-    );
-  }
-}
-
-class HomeContentPage extends StatefulWidget {
-  const HomeContentPage({super.key});
-
-  @override
-  State<HomeContentPage> createState() => _HomeContentPageState();
-}
-
-class _HomeContentPageState extends State<HomeContentPage> {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundColor,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.0.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Home Page',
-                  style: themeData.textTheme.bodyLarge,
-                ),
-                // Add more widgets here
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
