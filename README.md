@@ -2,7 +2,7 @@
 
 Application mobile développée dans le cadre du Hackathon Tatweer 2025 (en qlq heures seuelement), permettant aux chauffeurs de suivre et gérer leurs livraisons de manière efficace et moderne.
 
-![Axio Driver Banner](assets/screenshots/banner.png)
+![Axio Driver Banner](assets/axio_logo.png)
 
 ## 🏆 Hackathon Tatweer
 
@@ -23,11 +23,9 @@ Ce projet a été développé lors du Hackathon Tatweer, il fait partie de notre
         <img src="assets/screenshots/historique_livraison.png" width="200" alt="Home Screen">
         <img src="assets/screenshots/decharge_produit.png" width="200" alt="Home Screen">
             <img src="assets/screenshots/mission_livraison.png" width="200" alt="Home Screen">
-            <img src="assets/screenshots/mission.png" width="200" alt="Home Screen">
             <img src="assets/screenshots/profil_conducteur.png" width="200" alt="Home Screen">
     <img src="assets/screenshots/signaler_probleme.png" width="200" alt="Home Screen">
     <img src="assets/screenshots/map.png" width="200" alt="Map View">
-    <img src="assets/screenshots/delivery.png" width="200" alt="Delivery Details">
 
 </div>
 
