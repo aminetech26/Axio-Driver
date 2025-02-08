@@ -77,41 +77,6 @@ class _MapWidgetState extends State<MapWidget> {
                 PolylineBuilderWidget(locations: widget.locations),
               ],
             ),
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: Column(
-                children: [
-                  FloatingActionButton(
-                    heroTag: 'zoomIn',
-                    mini: true,
-                    onPressed: () {
-                      setState(() {
-                        final center = _currentCenter ??
-                            widget.mapController.camera.center;
-                        widget.mapController
-                            .move(center, widget.mapController.camera.zoom + 1);
-                      });
-                    },
-                    child: const Icon(Icons.add),
-                  ),
-                  const SizedBox(height: 8),
-                  FloatingActionButton(
-                    heroTag: 'zoomOut',
-                    mini: true,
-                    onPressed: () {
-                      setState(() {
-                        final center = _currentCenter ??
-                            widget.mapController.camera.center;
-                        widget.mapController
-                            .move(center, widget.mapController.camera.zoom - 1);
-                      });
-                    },
-                    child: const Icon(Icons.remove),
-                  ),
-                ],
-              ),
-            ),
           ],
         );
       },

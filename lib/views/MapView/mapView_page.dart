@@ -19,6 +19,9 @@ class _MapviewPageState extends State<MapviewPage> {
   late List<MapLocation> locations;
   bool _isBottomSheetExpanded = false;
   final MapController _mapController = MapController();
+  late TextEditingController _problemController;
+  bool _includeLocation = false;
+  late List<bool> _stationDelivered;
 
   @override
   void initState() {
@@ -27,6 +30,14 @@ class _MapviewPageState extends State<MapviewPage> {
         .map((loc) =>
             MapLocation(latitude: loc.latitude, longitude: loc.longitude))
         .toList();
+    _stationDelivered = List<bool>.filled(locations.length, false);
+    _problemController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _problemController.dispose();
+    super.dispose();
   }
 
   void _zoomIn() {
@@ -46,6 +57,98 @@ class _MapviewPageState extends State<MapviewPage> {
         14.0,
       );
     }
+  }
+
+  void _showProblemModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surfaceColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding:
+              MediaQuery.of(context).viewInsets.add(const EdgeInsets.all(16)),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.borderDark,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Text(
+                  "Signaler un problème",
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _problemController,
+                  decoration: InputDecoration(
+                    hintText: "Décrivez la situation",
+                    hintStyle: const TextStyle(color: AppColors.textHint),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          const BorderSide(color: AppColors.borderLight),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                          const BorderSide(color: AppColors.primaryBlue),
+                    ),
+                    filled: true,
+                    fillColor: AppColors.secondaryBlue,
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    "Joindre ma localisation",
+                    style: TextStyle(color: AppColors.textPrimary),
+                  ),
+                  value: _includeLocation,
+                  activeColor: AppColors.primaryBlue,
+                  onChanged: (val) {
+                    setState(() {
+                      _includeLocation = val ?? false;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size.fromHeight(48),
+                  ),
+                  child: const Text("Envoyer",
+                      style: TextStyle(color: AppColors.surfaceColor)),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -164,7 +267,14 @@ class _MapviewPageState extends State<MapviewPage> {
               child: Container(
                 height: 280,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceColor,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.surfaceColor,
+                      AppColors.surfaceColor.withOpacity(0.95),
+                    ],
+                  ),
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(20)),
                   boxShadow: [
@@ -175,47 +285,199 @@ class _MapviewPageState extends State<MapviewPage> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    // Drag Handle
-                    Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: AppColors.borderDark,
-                        borderRadius: BorderRadius.circular(2),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.borderDark.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Détails de la livraison",
-                            style: theme.textTheme.displayMedium?.copyWith(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w600,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.secondaryBlue,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(Icons.local_shipping,
+                                      color: AppColors.primaryBlue),
+                                ),
+                                const SizedBox(width: 16),
+                                Text(
+                                  "Détails de la livraison",
+                                  style:
+                                      theme.textTheme.displayMedium?.copyWith(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          _InfoRow(
-                            icon: Icons.location_on,
-                            text: "${locations.length} points de livraison",
-                            theme: theme,
-                          ),
-                          const SizedBox(height: 16),
-                          _InfoRow(
-                            icon: Icons.access_time,
-                            text:
-                                "Durée estimée: ${trip.predefinedEndDate.difference(trip.predefinedStartDate).inDays} jours",
-                            theme: theme,
-                          ),
-                        ],
+                            const SizedBox(height: 24),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondaryBlue.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColors.borderLight,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  _InfoRow(
+                                    icon: Icons.location_on,
+                                    text:
+                                        "${locations.length} points de livraison",
+                                    theme: theme,
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    child: Divider(),
+                                  ),
+                                  _InfoRow(
+                                    icon: Icons.access_time,
+                                    text:
+                                        "Durée estimée: ${trip.predefinedEndDate.difference(trip.predefinedStartDate).inDays} jours",
+                                    theme: theme,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Column(
+                              children:
+                                  List.generate(locations.length, (index) {
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: _stationDelivered[index]
+                                        ? AppColors.secondaryBlue
+                                            .withOpacity(0.2)
+                                        : AppColors.surfaceColor,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: _stationDelivered[index]
+                                          ? AppColors.primaryBlue
+                                              .withOpacity(0.3)
+                                          : AppColors.borderLight,
+                                    ),
+                                  ),
+                                  child: _stationDelivered[index]
+                                      ? Row(
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryBlue,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: const Icon(
+                                                Icons.check,
+                                                color: AppColors.surfaceColor,
+                                                size: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            Text(
+                                              "Station ${index + 1}: Déchargé",
+                                              style: theme.textTheme.bodyLarge
+                                                  ?.copyWith(
+                                                color: AppColors.textPrimary,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                "Station ${index + 1}",
+                                                style: theme.textTheme.bodyLarge
+                                                    ?.copyWith(
+                                                  color: AppColors.textPrimary,
+                                                ),
+                                              ),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  _stationDelivered[index] =
+                                                      true;
+                                                });
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    AppColors.primaryBlue,
+                                                elevation: 0,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 16,
+                                                  vertical: 8,
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                "Confirmer déchargement",
+                                                style: TextStyle(
+                                                  color: AppColors.surfaceColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                );
+                              }),
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.redError.withOpacity(0.2),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton.icon(
+                                onPressed: _showProblemModal,
+                                icon: const Icon(Icons.warning_amber_rounded),
+                                label: const Text("Signaler un problème"),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.redError,
+                                  foregroundColor: AppColors.surfaceColor,
+                                  elevation: 0,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
