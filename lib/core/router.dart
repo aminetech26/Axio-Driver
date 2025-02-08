@@ -1,7 +1,9 @@
 import 'package:axio_driver/splash_screen.dart';
 import 'package:axio_driver/views/HomeView/home_view.dart';
+import 'package:axio_driver/views/MapView/mapView_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:axio_driver/models/destination_model.dart';
 
 class AppRouter {
   AppRouter._();
@@ -51,7 +53,19 @@ class AppRouter {
             const HomePage(),
           );
         },
-      )
+      ),
+      GoRoute(
+        path: '/mapViewRoute',
+        name: 'mapViewRoute',
+        pageBuilder: (context, state) {
+          final destinationResponse = state.extra as DestinationResponse;
+          return _pageSimpleRoute(
+            MapviewPage(
+              destinationResponse: destinationResponse,
+            ),
+          );
+        },
+      ),
     ],
   );
 

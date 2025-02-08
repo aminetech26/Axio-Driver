@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:axio_driver/core/services/permission_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -55,13 +56,25 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _initializeNavigation() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    final hasPermission = await PermissionService.checkLocationPermission();
+    if (!hasPermission) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'La localisation est nécessaire pour le fonctionnement de l\'application'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
 
     if (mounted) {
       setState(() => _isLoading = false);
-
       await _animController.reverse();
-
       if (mounted) {
         GoRouter.of(context).go('/HomePage');
       }

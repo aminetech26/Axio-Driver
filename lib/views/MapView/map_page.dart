@@ -158,7 +158,8 @@ class _MapPageState extends State<MapPage> {
                       const SizedBox(height: 50),
                       ElevatedButton.icon(
                         onPressed: () {
-                          GoRouter.of(context).go('/mapViewRoute');
+                          context.go('/mapViewRoute',
+                              extra: destinationResponse);
                         },
                         icon: const Icon(Icons.navigation,
                             color: AppColors.surfaceColor),
