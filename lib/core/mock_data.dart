@@ -13,19 +13,19 @@ class MockData {
         {
           "id": "act_1",
           "type": "delivery_completed",
-          "description": "Livraison terminée à Paris",
+          "description": "Livraison terminée à Alger",
           "timestamp": "2024-02-15T14:30:00Z"
         },
         {
           "id": "act_2",
           "type": "delivery_started",
-          "description": "Nouvelle mission vers Lyon",
+          "description": "Nouvelle mission vers Oran",
           "timestamp": "2024-02-15T09:00:00Z"
         }
       ],
       "activeMission": {
         "id": "mission_123",
-        "destination": "Lyon",
+        "destination": "Oran",
         "expectedDelivery": "2024-02-16T18:00:00Z",
         "progress": 65.5,
         "stopsCompleted": 3,
@@ -41,7 +41,7 @@ class MockData {
       {
         "id": "del_123",
         "missionId": "mission_123",
-        "destination": "Lyon",
+        "destination": "Constantine",
         "startDate": "2024-02-10T08:00:00Z",
         "endDate": "2024-02-12T17:30:00Z",
         "distance": 463.5,
@@ -49,7 +49,7 @@ class MockData {
         "rating": 4.8,
         "stops": [
           {
-            "address": "123 Rue de Lyon",
+            "address": "123 Rue Larbi Ben M'hidi, Constantine",
             "arrivalTime": "2024-02-11T14:30:00Z",
             "status": "completed"
           }
@@ -58,7 +58,7 @@ class MockData {
       {
         "id": "del_124",
         "missionId": "mission_124",
-        "destination": "Marseille",
+        "destination": "Annaba",
         "startDate": "2024-02-05T09:00:00Z",
         "endDate": "2024-02-07T16:00:00Z",
         "distance": 775.2,
@@ -66,7 +66,7 @@ class MockData {
         "rating": 5.0,
         "stops": [
           {
-            "address": "45 Avenue du Prado",
+            "address": "45 Boulevard de la Revolution, Annaba",
             "arrivalTime": "2024-02-06T15:00:00Z",
             "status": "completed"
           }
@@ -86,10 +86,10 @@ class MockData {
     "message": "Driver profile retrieved successfully",
     "data": {
       "id": "driver_123",
-      "firstName": "Jean",
-      "lastName": "Dupont",
-      "email": "jean.dupont@example.com",
-      "phone": "+33612345678",
+      "firstName": "Karim",
+      "lastName": "Benzaim",
+      "email": "karim.benzaim@example.com",
+      "phone": "+213555123456",
       "photoUrl": "https://randomuser.me/api/portraits/men/32.jpg",
       "license": {
         "number": "12345678",
@@ -99,7 +99,7 @@ class MockData {
       "currentVehicle": {
         "id": "vehicle_123",
         "model": "Renault T460",
-        "plate": "AA-123-BB"
+        "plate": "16-123-456"
       },
       "stats": {
         "totalDeliveries": 156,

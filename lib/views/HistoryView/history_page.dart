@@ -1,174 +1,137 @@
 import 'package:axio_driver/core/app_colors.dart';
 import 'package:axio_driver/core/mock_data.dart';
 import 'package:flutter/material.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:intl/intl.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
 
+  String _formatDate(String dateStr) {
+    final date = DateTime.parse(dateStr);
+    return DateFormat.yMMMd().format(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final historyData = MockData.historyData['data'] as List;
+    final historyData = MockData.historyData;
+    final deliveries = historyData['data'] as List;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.surfaceColor,
-        title: Text('Historique', style: theme.textTheme.displayMedium),
+        title: Text(
+          'Historique',
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: Colors.white,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: true,
-        elevation: 0,
+        backgroundColor: AppColors.primaryBlue,
+        elevation: 4,
       ),
-      body: ListView.builder(
+      body: ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: historyData.length,
+        itemCount: deliveries.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 20),
         itemBuilder: (context, index) {
-          final delivery = historyData[index] as Map<String, dynamic>;
-          final startDate = DateTime.parse(delivery['startDate']);
-          final endDate = DateTime.parse(delivery['endDate']);
-
-          return Card(
-            margin: const EdgeInsets.only(bottom: 16),
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: const BoxDecoration(
-                    color: AppColors.primaryBlue,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16)),
-                  ),
-                  child: Row(
+          final delivery = deliveries[index];
+          final start = _formatDate(delivery['startDate']);
+          final end = _formatDate(delivery['endDate']);
+          return InkWell(
+            onTap: () {
+              // TODO: Navigate to detail view
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  )
+                ],
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header row: Destination and status icon
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.location_on,
-                          color: AppColors.surfaceColor),
-                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          delivery['destination'],
-                          style: theme.textTheme.headlineMedium?.copyWith(
-                            color: AppColors.surfaceColor,
+                          delivery['destination'] ?? 'Destination inconnue',
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.star,
-                                size: 16, color: Colors.amber[700]),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${delivery['rating']}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 28,
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
+                  const SizedBox(height: 8),
+                  Divider(color: Colors.grey.shade300, thickness: 1),
+                  const SizedBox(height: 8),
+                  // Dates row
+                  Row(
                     children: [
-                      _InfoRow(
-                        icon: Icons.calendar_today,
-                        title: 'Date de début',
-                        value: timeago.format(startDate, locale: 'fr'),
-                        theme: theme,
-                      ),
-                      const Divider(height: 16),
-                      _InfoRow(
-                        icon: Icons.flag,
-                        title: 'Date de fin',
-                        value: timeago.format(endDate, locale: 'fr'),
-                        theme: theme,
-                      ),
-                      const Divider(height: 16),
-                      _InfoRow(
-                        icon: Icons.straighten,
-                        title: 'Distance parcourue',
-                        value: '${delivery['distance']} km',
-                        theme: theme,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondaryBlue,
-                          foregroundColor: AppColors.primaryBlue,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      const Icon(Icons.access_time,
+                          size: 20, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          'De $start à $end',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontSize: 16,
+                            color: Colors.grey.shade600,
                           ),
-                          minimumSize: const Size(double.infinity, 44),
                         ),
-                        onPressed: () {
-                          // Show delivery details
-                        },
-                        child: const Text('Voir les détails'),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  // Info row: Distance and Rating
+                  Row(
+                    children: [
+                      const Icon(Icons.local_shipping,
+                          size: 20, color: AppColors.primaryBlue),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Distance: ${delivery['distance']} km',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.star, size: 20, color: Colors.amber),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${delivery['rating']}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           );
         },
       ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String value;
-  final ThemeData theme;
-
-  const _InfoRow({
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppColors.primaryBlue),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-            Text(
-              value,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
